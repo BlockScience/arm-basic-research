@@ -143,12 +143,12 @@ def update_model(params, step, sL, s, inputs):
     return key, value
 
 def update_items(params, step, sL, s, inputs):
-
      
     items = s['items']
     #print(items)   
     if 'item_id' in inputs.keys():
         current_item_id = inputs['item_id']
+        print(current_item_id)
         print(items[current_item_id].for_sale)
         items[current_item_id].swap()
 
