@@ -6,7 +6,7 @@ from .state import genesis_state
 # Parameters
 # Values are lists because they support sweeping.
 simulation_config = configuration.utils.config_sim({
-    "T": range(5),
+    "T": range(10),
     "N": 1,
     'M': {'n':[10]
     }

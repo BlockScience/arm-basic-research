@@ -27,7 +27,7 @@ psubs = [
     {
         'label': 'buy items from ARM',
         'policies': {
-            'sell': buy_encounter  # how much is paid in.
+            'buy': buy_encounter  # how much is paid in.
         },
         'variables': {
             'items': update_items,
