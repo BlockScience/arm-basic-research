@@ -18,7 +18,7 @@ def track_items(params, step, sL, s, inputs):
     grab the new items from inputs and append them to the state 'items'
     """
     items = s['items']
-    print(items)
+    #print(items)
     
     new_items = inputs['new_items']
 
@@ -28,7 +28,7 @@ def track_items(params, step, sL, s, inputs):
     key = 'items'
     value = items
 
-    print(items)
+    #print(items)
     return key, value
 
 def buy_encounter(params, step, sL, s):
@@ -45,9 +45,9 @@ def buy_encounter(params, step, sL, s):
         i = items[k]
         x = i.attributes
         private_price = quadratic_form(x,context_matrix)
-        print(private_price)
+        #print(private_price)
         arm_price = model.predict(x)
-        print(arm_price)
+        #print(arm_price)
         if private_price >= arm_price:
             gap = private_price-arm_price
             if gap > best_gap:
@@ -63,11 +63,13 @@ def buy_encounter(params, step, sL, s):
 def outof_reserve(params, step, sL, s, inputs):
 
     #inputs from buy_encounter
-    purchased_item_id = inputs['item_id']
-    model = s['model']
-    items = s['items']
-    purchased_item = items[purchased_item_id]
-    price = model.predict(purchased_item.attributes)
+    price = 0
+    if 'item_id' in inputs.keys():
+        purchased_item_id = inputs['item_id']
+        model = s['model']
+        items = s['items']
+        purchased_item = items[purchased_item_id]
+        price = model.predict(purchased_item.attributes)
 
     key = 'reserve'
     value = s['reserve']+price
@@ -88,9 +90,9 @@ def sell_encounter(params, step, sL, s):
         i = items[k]
         x = i.attributes
         private_price = quadratic_form(x,context_matrix)
-        print(private_price)
+        #print(private_price)
         arm_price = model.predict(x)
-        print(arm_price)
+        #print(arm_price)
         if private_price <= arm_price:
             gap = arm_price-private_price
             if gap > best_gap:
@@ -106,11 +108,13 @@ def sell_encounter(params, step, sL, s):
 def into_reserve(params, step, sL, s, inputs):
 
     #inputes from sell_encounter
-    purchased_item_id = inputs['item_id']
-    model = s['model']
-    items = s['items']
-    purchased_item = items[purchased_item_id]
-    price = model.predict(purchased_item.attributes)
+    price = 0
+    if 'item_id' in inputs.keys():
+        purchased_item_id = inputs['item_id']
+        model = s['model']    
+        items = s['items']
+        purchased_item = items[purchased_item_id]
+        price = model.predict(purchased_item.attributes)
 
     key = 'reserve'
     value = s['reserve']-price
@@ -119,15 +123,19 @@ def into_reserve(params, step, sL, s, inputs):
 
 def update_model(params, step, sL, s, inputs):
 
-    purchased_item_id = inputs['item_id']
     model = s['model']
-    items = s['items']
-    purchased_item = items[purchased_item_id]
+
+    if 'item_id' in inputs.keys():
     
-    ### as written this is tautological: needs rework
-    x = purchased_item.attributes
-    y = model.predict(purchased_item.attributes)
-    model.update(x, y)
+        purchased_item_id = inputs['item_id']
+        
+        items = s['items']
+        purchased_item = items[purchased_item_id]
+        
+        ### as written this is tautological: needs rework
+        x = purchased_item.attributes
+        y = model.predict(purchased_item.attributes)
+        model.update(x, y)
 
     key = 'model'
     value = model
@@ -136,10 +144,12 @@ def update_model(params, step, sL, s, inputs):
 
 def update_items(params, step, sL, s, inputs):
 
+     
     items = s['items']
-
-    current_item_id = inputs['item_id']
-    items[current_item_id].swap()
+    #print(items)   
+    if 'item_id' in inputs.keys():
+        current_item_id = inputs['item_id']
+        items[current_item_id].swap()
 
     key = 'items'
     value = items
