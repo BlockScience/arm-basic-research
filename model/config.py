@@ -8,7 +8,7 @@ from .state import genesis_state
 simulation_config = configuration.utils.config_sim({
     "T": range(90),
     "N": 1,
-    'M': {
+    'M': {'n':[10]
     }
 })
 
