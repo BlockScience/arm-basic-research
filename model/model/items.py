@@ -19,6 +19,7 @@ class Item:
 
         """
         #self.last_price = price
+        print(self.for_sale)
         self.for_sale = not(self.for_sale) #switches its sign
 
     def compare(self, other):

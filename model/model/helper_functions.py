@@ -11,7 +11,7 @@ def gen_context(n=10):
     method returns a random matrix which can be used to produce private prices over a bunch of items
     """
 
-    return np.random.randint(0,5,size=(n,n))
+    return np.random.randint(-3,4,size=(n,n))
 
 def is_for_sale(items, flip=False):
     if flip:

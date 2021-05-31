@@ -46,13 +46,13 @@ def buy_encounter(params, step, sL, s):
         x = i.attributes
         private_price = quadratic_form(x,context_matrix)
         #print(private_price)
-        arm_price = model.predict(x)
+        arm_price = model.predict(x)*(1+params['purchase_fee'])
         #print(arm_price)
         if private_price >= arm_price:
             gap = private_price-arm_price
             if gap > best_gap:
                 best_gap = gap
-                best_item = i
+                best_item = k
     
     if best_item==None:
         return {}
@@ -71,34 +71,44 @@ def outof_reserve(params, step, sL, s, inputs):
         purchased_item = items[purchased_item_id]
         price = model.predict(purchased_item.attributes)
 
+        print("item "+str(purchased_item_id)+" was sold to ARM for "+str(price))
+    else:
+        print("no sale to ARM this round")
+
     key = 'reserve'
-    value = s['reserve']+price
+    value = s['reserve']-price
 
     return key, value
 
 def sell_encounter(params, step, sL, s):
     """
-    agent sells from ARM
+    agent sells to ARM
     """
     model = s['model']
     context_matrix = gen_context()
     items = s['items']
     best_item = None
     best_gap = 0
+    best_price = 0
     
     for k in is_for_sale(items, flip=True):
         i = items[k]
         x = i.attributes
         private_price = quadratic_form(x,context_matrix)
         #print(private_price)
-        arm_price = model.predict(x)
+        arm_price = model.predict(x)*(1-params['purchase_fee'])
         #print(arm_price)
         if private_price <= arm_price:
             gap = arm_price-private_price
             if gap > best_gap:
                 best_gap = gap
-                best_item = i
+                best_item = k
+
+                best_price = arm_price
     
+    if best_price>s['reserve']:
+        best_item=None
+
     if best_item==None:
         return {}
     
@@ -115,9 +125,13 @@ def into_reserve(params, step, sL, s, inputs):
         items = s['items']
         purchased_item = items[purchased_item_id]
         price = model.predict(purchased_item.attributes)
+        print("item "+str(purchased_item_id)+" was purchased from ARM for "+str(price))
+    else:
+        print("no purchase from ARM this round")
+
 
     key = 'reserve'
-    value = s['reserve']-price
+    value = s['reserve']+price
 
     return key, value
 
@@ -145,11 +159,12 @@ def update_model(params, step, sL, s, inputs):
 def update_items(params, step, sL, s, inputs):
      
     items = s['items']
-    #print(items)   
+    #print(items.keys())
+    #print(inputs)   
     if 'item_id' in inputs.keys():
         current_item_id = inputs['item_id']
-        print(current_item_id)
-        print(items[current_item_id].for_sale)
+        #print(current_item_id)
+        #print(items[current_item_id].for_sale)
         items[current_item_id].swap()
 
     key = 'items'
