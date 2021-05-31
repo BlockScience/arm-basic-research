@@ -60,23 +60,23 @@ def buy_encounter(params, step, sL, s):
     else:
         return{'item_id':best_item}
 
-def outof_reserve(params, step, sL, s, inputs):
+def into_reserve(params, step, sL, s, inputs):
 
-    #inputs from buy_encounter
+    #inputes from sell_encounter
     price = 0
     if 'item_id' in inputs.keys():
         purchased_item_id = inputs['item_id']
-        model = s['model']
+        model = s['model']    
         items = s['items']
         purchased_item = items[purchased_item_id]
-        price = model.predict(purchased_item.attributes)
-
-        print("item "+str(purchased_item_id)+" was sold to ARM for "+str(price))
+        price = model.predict(purchased_item.attributes)*(1+params['purchase_fee'])
+        print("item "+str(purchased_item_id)+" was purchased from ARM for "+str(price))
     else:
-        print("no sale to ARM this round")
+        print("no purchase from ARM this round")
+
 
     key = 'reserve'
-    value = s['reserve']-price
+    value = s['reserve']+price
 
     return key, value
 
@@ -115,25 +115,29 @@ def sell_encounter(params, step, sL, s):
     else:
         return{'item_id':best_item}
 
-def into_reserve(params, step, sL, s, inputs):
+def outof_reserve(params, step, sL, s, inputs):
 
-    #inputes from sell_encounter
+    #inputs from buy_encounter
     price = 0
     if 'item_id' in inputs.keys():
         purchased_item_id = inputs['item_id']
-        model = s['model']    
+        model = s['model']
         items = s['items']
         purchased_item = items[purchased_item_id]
-        price = model.predict(purchased_item.attributes)
-        print("item "+str(purchased_item_id)+" was purchased from ARM for "+str(price))
-    else:
-        print("no purchase from ARM this round")
+        price = model.predict(purchased_item.attributes)*(1-params['purchase_fee'])
 
+        print("item "+str(purchased_item_id)+" was sold to ARM for "+str(price))
+    else:
+        print("no sale to ARM this round")
 
     key = 'reserve'
-    value = s['reserve']+price
+    value = s['reserve']-price
 
     return key, value
+
+
+
+
 
 def update_model(params, step, sL, s, inputs):
 
