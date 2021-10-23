@@ -1,6 +1,6 @@
 import numpy as np
 from .items import Item
-from .helper_functions import gen_context, is_for_sale, quadratic_form
+from .helper_functions import gen_context, gen_contexts, is_for_sale, quadratic_form
 
 def create_items(params, step, sL, s):
     
@@ -36,7 +36,7 @@ def buy_encounter(params, step, sL, s):
     agent buys from ARM
     """
     model = s['model']
-    context_matrix = gen_context()
+    context_matrix = gen_contexts()
     items = s['items']
     best_item = None
     best_gap = 0
@@ -85,7 +85,7 @@ def sell_encounter(params, step, sL, s):
     agent sells to ARM
     """
     model = s['model']
-    context_matrix = gen_context()
+    context_matrix = gen_contexts()
     items = s['items']
     best_item = None
     best_gap = 0
