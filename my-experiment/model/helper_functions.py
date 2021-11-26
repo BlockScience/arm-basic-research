@@ -1,10 +1,10 @@
 import numpy as np
 
-def gen_attributes(n=10):
+def gen_attributes(n=25):
     """
     n random bits make up the attributes in the dummy model
     """
-    return np.random.randint(0,2,size=n)
+    return np.random.rand(0,2,size=n)
 
 def gen_context(n=10):
     """
